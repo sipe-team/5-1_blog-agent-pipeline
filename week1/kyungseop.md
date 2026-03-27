@@ -2,20 +2,21 @@
 
 ## 아웃풋 목표
 
-- Claude Code를 활용하여 ML 연구자를 위한 특정 모델 TTA 연구 파이프라인 구축
+- Claude Code 기반으로 ML 연구자를 위한 EzAudio TTA 연구 파이프라인 구축
+- 산출물: GitHub 레포 (research-claude)
 
 ## 파이프라인 설계
 
-```
-[논문 PDF] → [Claude 분석] → analysis.md
-                                 ↓
-                         [코드 수정 (git branch)]
-                                 ↓
-                  [원격 GPU 실행] ← scripts/ (sync, run, pull)
-                                 ↓
-                         [결과 분석 & 시각화]
-                                 ↕ (비선형 반복)
-                          research-log.md
+```mermaid
+flowchart LR
+    A[📄 논문 PDF] --> B[🤖 Claude 분석]
+    B --> C[analysis.md]
+    B --> D[🔍 코드 수정]
+    D --> E[⚙️ 실험 설계]
+    E --> F[🖥️ 원격 GPU 실행]
+    F --> G[📈 결과 분석]
+    G -.->|비선형 반복| B
+    G --> H[research-log.md]
 ```
 
 - **수집 소스**: 논문 PDF, GitHub 원본 코드, 원격 서버 실험 결과
@@ -31,13 +32,21 @@
   - 선형 4단계 → 비선형 반복 모델로 개편
 - quality-reviewer로 재검증 → 실행 레벨 버그 3개 추가 수정
 
+```mermaid
+flowchart LR
+    A[초기 설계] -->|architect| B[7개 구조 문제 발견]
+    B --> C[리팩토링]
+    C -->|quality-reviewer| D[3개 실행 버그 발견]
+    D --> E[최종 완성]
+```
+
 ## 구현 중 막힌 것 / 해결한 것
 
-| 문제                                                            | 해결 여부 | 메모                                                   |
-| --------------------------------------------------------------- | --------- | ------------------------------------------------------ |
-| 초기 설계가 개발자 패턴(선형, 문서화 우선)으로 ML 연구에 부적합 | O         | architect 에이전트로 문제 발견, 구조 리팩토링으로 해결 |
-| baseline.yaml이 EzAudio 실제 config와 불일치                    | O         | 원본 config 분석 후 실제 형식에 맞게 교체              |
-| 리팩토링 후 구버전 파일 참조 잔존                               | O         | quality-reviewer로 전수 검사 후 제거                   |
+| 문제 | 해결 여부 | 메모 |
+|------|-----------|------|
+| 초기 설계가 개발자 패턴(선형, 문서화 우선)으로 ML 연구에 부적합 | ✅ | architect 에이전트로 문제 발견, 구조 리팩토링으로 해결 |
+| baseline.yaml이 EzAudio 실제 config와 불일치 | ✅ | 원본 config 분석 후 실제 형식에 맞게 교체 |
+| 리팩토링 후 구버전 파일 참조 잔존 | ✅ | quality-reviewer로 전수 검사 후 제거 |
 
 ## 인사이트 / 배운 것
 
