@@ -64,6 +64,7 @@
 
 ## 파이프라인 초안 설계
 
+![img.png](images/img.png)
 
 
 
