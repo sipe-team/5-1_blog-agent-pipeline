@@ -86,22 +86,22 @@ flowchart TB
 | 일일 요약 | Sonnet | 스켈레톤 기반 정리 | 중간 (타입당 1회) |
 | 주간 요약 | Sonnet | 블로그형 리포트 | 중간 (타입당 1회) |
 
-## 핵심 설계 결정
+## 핵심 설계
 
-### 왜 매 응답마다 즉시 git push 하는가
+### 응답마다 즉시 git push
 
 - Claude의 컨텍스트 저장을 신뢰할 수 없음 — 세션이 끊기거나 컨텍스트가 압축되면 데이터 유실 가능
 - git push를 통해 **매 응답마다 확실하게 데이터를 영속화**
 - 이 구조 덕분에 GitHub Actions 배치가 항상 최신 데이터를 기반으로 동작
 
-### 왜 Claude Code GUI에 초점을 맞췄는가
+### Claude Code GUI에도 그데로 사용가능하도록 반영
 
 - Claude Code GUI는 git repo를 clone해서 실행하는 구조
 - 따라서 `.claude/settings.json`에 등록된 Stop Hook이 GUI에서도 그대로 동작
 - 브라우저·스마트폰에서도 터미널과 완전히 동일한 파이프라인이 작동
 - 디바이스 제약 없이 어디서든 대화하면 자동으로 기록이 쌓이는 환경 확보
 
-### 왜 첫 수집(stack)에 LLM을 쓰지 않는가
+### 수집(stack)에 LLM 비사용
 
 - Claude Code GUI가 git 기반으로 동작해야 하므로, 수집 단계에서 외부 API 호출 의존성을 넣으면 환경 제약이 생김
 - Stop Hook은 **bash 스크립트로 정규식 기반 추출**만 수행 — LLM 없이 빠르고 안정적
