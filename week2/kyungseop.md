@@ -22,7 +22,7 @@ flowchart LR
     F --> N2["Discord 알림\n(초안 완성)"]
     N2 --> G["검토\n(사람)"]
     G -->|Rewriter| E
-    G -->|Publish| H[발행\n(Sonnet)]
+    G -->|Publish| H["발행\n(Sonnet)"]
     H --> I["kskim.dev PR"]
 ```
 
