@@ -96,9 +96,9 @@ ai-agent/
 │           └── commit-summary/          # [신규] 커밋 분석 Skill
 │               └── SKILL.md
 ├── docs/                                # [신규] 설정/인프라 문서
-│   ├── moai-compose/
-│   ├── moai-init/
-│   └── moai-nginx/
+│  
+│  
+│   
 ├── scripts/
 │   ├── save_stack.sh                    # Stop hook → 대화 저장 + git push
 │   ├── classify_stack.sh                # Daily 배치 → 분류 + 요약
