@@ -1,4 +1,4 @@
-# Week 2 - seokbeom
+# Week 4 - seokbeom
 
 ## 이번 주 목표
 
