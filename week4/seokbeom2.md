@@ -160,42 +160,6 @@ erDiagram
 
 ---
 
-## 까다로웠던 것들 — AI 가 만든 버그와 AI 가 고친 버그
-
-### 1. JPQL null 파라미터의 bytea 타입 추론
-
-홈의 "최근 글" 섹션이 500 에러로 비어 있었습니다.
-
-```
-InvalidDataAccessResourceUsageException: function lower(bytea) does not exist
-```
-
-`searchSummary` JPQL 에서 `(:q IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')))` 라고 썼는데, 클라이언트가 q 를 안 주면 Hibernate 가 NULL 로 바인딩합니다. 그럼 PG JDBC 드라이버가 타입 힌트가 없어서 **default bytea(unspecified)** 로 넘기고, `CONCAT('%', ?::bytea, '%')` 가 bytea 연결이 되어 `LOWER(bytea)` 를 못 찾는 거였습니다.
-
-해결은 `CAST(:q AS string)` 로 감싸기. AI 가 스스로 원인 분석부터 최소 침습 픽스까지 한 번에 해냈습니다.
-
-### 2. Next.js 15 의 percent-encoded slug 이중 인코딩
-
-한글 slug 가 404 나는데 실제로는 403 이었습니다. Spring Security `StrictHttpFirewall` 가 `%25` 를 거부했기 때문입니다. Next.js 15.5.15 의 `params.slug` 가 **percent-encoded 원본을 그대로** 주는데 우리 코드가 한 번 더 `encodeURIComponent` 를 걸면서 이중 인코딩이 된 거였습니다.
-
-### 3. Spring Boot 4 에서 Flyway auto-config 사라짐
-
-`docker compose up` 후 api 컨테이너가 `Schema validation: missing table [bookmarks]` 로 재시작 루프. 로그에 **Flyway 메시지가 한 줄도 없었습니다**. 원인: SB 4 가 auto-configuration 을 모듈 단위로 쪼개면서 Flyway 도 `org.springframework.boot:spring-boot-flyway` 로 빠졌습니다. `flyway-core` 만 있으면 빈이 안 만들어져서 마이그레이션이 전혀 돌지 않습니다.
-
-### 4. Server Component 에 함수 prop 금지
-
-프로필 페이지 server-side exception. `PostCard` 가 Server Component 인데 `<Link>` 에 `onClick={stopPropagation}` 을 넘겼습니다. 게다가 nested `<Link>` 였습니다. 카드 구조 자체를 바꿔서 해결.
-
-### 5. Next.js ISR 캐시가 404 를 고착시킴
-
-새 글 업로드 직후 상세 페이지에서 404. DB·API·네트워크 모두 정상. 원인은 `export const revalidate = 60` — 이전 시점의 404 응답이 Next.js data cache 에 60초 고착됐습니다. `force-dynamic` 으로 전환 + `revalidate: false` 로 해결.
-
-### 6. WSL2 환경에서 80 포트 점유
-
-Windows 에서 `http://localhost` 타임아웃. WSL 내부 `curl localhost` 는 200. 방화벽/IIS 가 80 점유 의심. Nginx 매핑을 `"8088:80"` 으로 돌려서 회피.
-
----
-
 ## AI 가 잘한 것 vs 못한 것
 
 ### 잘한 것
@@ -234,41 +198,6 @@ Windows 에서 `http://localhost` 타임아웃. WSL 내부 `curl localhost` 는 
 | AI 가 설계에서 벗어남 | 예상됨 | 마일스톤 번호 + 로그 한 줄에 "Why" 기록으로 억제 |
 | 빌드/실행 에러 | 예상됨 | 사람이 전담 — AI 는 코드만, 빌드는 나만 |
 | 최신 프레임워크 오용 (SB 4 Flyway) | 예상 못함 | 에러 기반 반복 수정 — 2~3 라운드 소요 |
-| nested Link / ISR 캐시 같은 Next.js 함정 | 예상 못함 | RSC vs Client 경계 감각은 여전히 약함 |
-| WSL 포트 점유 | 예상 못함 | 환경 문제라 AI 탓은 아님 |
-
----
-
-## 이번 주에 느낀 것
-
-- **AI 에게 맡길 때 가장 비싼 자원은 토큰이 아니라 "내가 리뷰하는 시간"** 입니다.
-- 그래서 **작업 단위를 작게 쪼개는 것보다, 리뷰 가능한 산출물 단위(= M)로 쪼개는 게** 더 중요합니다.
-- **문서 구조 자체가 AI 의 상태를 담는 그릇** 입니다. 코드는 쉽게 고치지만, 문서 구조가 엉망이면 AI 가 자기 자신을 잃습니다.
-- velog 기능 절반을 한 주 만에 짠 게 놀라운 게 아니라, **같은 구조를 2주 뒤에 다시 이어서 작업할 수 있느냐** 가 진짜 시험입니다. 이건 다음 주에 확인해 볼 예정입니다.
-
----
-
-## 다음 주 계획
-
-### 1. 실제로 글 써보기
-
-- 제가 이 시스템을 써서 실제 글을 올려봐야 합니다.
-- 지금까지는 AI 가 짠 코드가 "돌아간다" 수준이고, "쓸만하다" 는 아직 검증 안 됨.
-
-### 2. 불편한 것 역으로 수집
-
-- 에디터, 이미지 드롭, TOC, 다크모드에서 사용자(= 나) 관점의 불만을 모읍니다.
-- 이걸 Week 1 의 Raw Inbox 에 그대로 넣어봅니다 (시스템끼리 연결).
-
-### 3. 2주 뒤 AI 가 이어갈 수 있는지 테스트
-
-- 의도적으로 2주 쉬고, 완전히 새 세션을 열어서 "M15: SSE 알림 전환" 을 시켜봅니다.
-- CLAUDE.md + README 만으로 AI 가 어디까지 복구하는지 기록합니다.
-
-### 4. Week 1 시스템과의 접점 찾기
-
-- 이번 프로젝트의 커밋 로그·에러 로그·AI 채팅이 Week 1 의 Git Collector / AI Chats 입력원과 동일합니다.
-- 블로그 발행 자체가 Week 1 Output 의 한 채널이 될 수 있습니다.
 
 ---
 
