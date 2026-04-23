@@ -104,8 +104,12 @@ gh api repos/Aqudi/notes/contents/content/posts/파일명 --method PUT ...
 
 ## 인사이트 / 배운 것
 
+- Z.AI의 GLM5.1이 생각보다 글을 잘 쓴다.
+- Max Token을 짧게 잡으니까 글을 쓰다가 만다.
+
 ## 다음 주 계획
 
 - Discord 웹훅 URL 설정 + 실제 알림 테스트
 - GitHub Issues 연동 vs Happy Coder 활용 방향 결정 (아마 Happy Coder로 가지 않을까)
 - 웹 대시보드 만들기 & 글 특정 부분 하이라이트해서 수정 요청하기 기능 만들기
+- Threads 용으로 봇을 만들어서 자동 게시하는 계정 만들어보기
