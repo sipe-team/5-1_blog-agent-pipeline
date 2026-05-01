@@ -64,6 +64,6 @@ AI가 코딩만 잘하는 이유를 알거같은..
 ## 이번 미션 GOAT (-105만원)
 <img width="720" height="617" alt="20260422_001638" src="https://github.com/user-attachments/assets/20e46048-2b4c-4d0d-9fe5-12f557817d6f" />
 
-## ps 빠르게 만든다고 벨로그 따라 만들라고 한건 잘하더라..
+## ps (AI가 코딩은 잘해요) 바이브 코딩으로만 시킨 벨로그 클론
 <img width="947" height="503" alt="image" src="https://github.com/user-attachments/assets/720b32f3-f6f7-4130-8f5a-d169ecf33a6b" />
 
